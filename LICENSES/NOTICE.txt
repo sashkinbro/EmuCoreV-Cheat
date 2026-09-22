@@ -1,0 +1,25 @@
+EmuCoreV Cheat Catalog - attribution and licensing
+==================================================
+
+The .psv packs in files/ come from the db/ folder of
+
+    https://github.com/r0ah/vitacheat
+    commit bb8158a1c696914a8ea2299889d42ab9a57a3ab2
+
+That repository is the community database for the FinalCheat/VitaCheat
+plugins. It publishes no LICENSE file and no blanket open-source license for
+the cheat data it collects. Therefore:
+
+- The catalog does not relicense the packs. It redistributes them unchanged,
+  byte for byte, with the original header comments (title, region, version,
+  code authors, original sources) intact.
+- Every entry in cheats.json records the sourceUrl of the exact upstream file
+  and the sourceName of the database.
+- The pack contents belong to the code authors credited inside each pack. The
+  catalog only groups them by title id so the emulator can find them.
+
+If you are a code author and want a pack removed, open an issue in this
+repository and it will be deleted from files/ and cheats.json.
+
+The catalog metadata, scripts and documentation written for this repository
+are provided under the same terms as the EmuCoreV project.

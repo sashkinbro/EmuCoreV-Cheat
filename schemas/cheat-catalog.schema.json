@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/sashkinbro/EmuCoreV-Cheat/main/schemas/cheat-catalog.schema.json",
+  "title": "EmuCoreV cheat catalog",
+  "type": "object",
+  "required": ["schemaVersion", "entries"],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "commit": { "type": "string" }
+      }
+    },
+    "entryCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "blockCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "titleId", "downloadUrl", "blockCount", "packPath", "sha256"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "titleId": {
+            "type": "string",
+            "pattern": "^[A-Z]{4}[0-9]{5}$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "authors": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "blockCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "packPath": {
+            "type": "string",
+            "pattern": "^files/[A-Z]{4}[0-9]{5}\\.psv$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "downloadUrl": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "sourceUrl": {
+            "type": "string"
+          },
+          "sourceName": {
+            "type": "string"
+          },
+          "license": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

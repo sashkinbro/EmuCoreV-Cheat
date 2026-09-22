@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "vitacheat-db",
+      "name": "VitaCheat database",
+      "author": "r0ah and the VitaCheat code contributors",
+      "url": "https://github.com/r0ah/vitacheat",
+      "commit": "bb8158a1c696914a8ea2299889d42ab9a57a3ab2",
+      "rawUrl": "https://raw.githubusercontent.com/r0ah/vitacheat/bb8158a1c696914a8ea2299889d42ab9a57a3ab2/db/",
+      "license": "Upstream terms; no blanket open-source license published",
+      "notes": "The db/ folder of the pinned revision holds 676 per-title .psv packs for the FinalCheat/VitaCheat plugins. No LICENSE file is published in the upstream repository, so this catalog keeps the original pack bytes untouched and records the exact commit, per-file source URL and author header of every pack. Attribution stays with the original code authors listed in each pack."
+    }
+  ]
+}
