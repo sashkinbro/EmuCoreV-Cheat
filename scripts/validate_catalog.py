@@ -13,6 +13,8 @@ import json
 import re
 from pathlib import Path
 
+from build_catalog import canonical_pack_bytes
+
 TITLE_ID_RE = re.compile(r"^[A-Z]{4}\d{5}$")
 
 
@@ -66,7 +68,7 @@ def main() -> int:
             problems.append(f"{title_id}: duplicate packPath: {pack_path}")
         pack_paths.add(pack_path)
 
-        digest = hashlib.sha256(pack_file.read_bytes()).hexdigest()
+        digest = hashlib.sha256(canonical_pack_bytes(pack_file.read_bytes())).hexdigest()
         if entry.get("sha256") != digest:
             problems.append(f"{title_id}: sha256 mismatch")
 

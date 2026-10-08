@@ -13,14 +13,17 @@ FinalCheat/VitaCheat `.psv` packs and the generated catalog around them.
 3. Keep the original cheat names. `_V0` declares a cheat that is off by
    default, `_V1` declares one that is on when the game boots. New submissions
    should use `_V0`.
-4. Regenerate the catalog and validate it:
+4. Keep the pack text and credits intact. The repository publishes `.psv`
+   files with LF line endings; catalog SHA-256 values cover that LF-canonical
+   representation so Windows and Unix builds agree.
+5. Regenerate the catalog and validate it:
 
    ```bash
    python scripts/build_catalog.py
    python scripts/validate_catalog.py
    ```
 
-5. Commit the pack, `cheats.json` and `build-report.json` together. Do not
+6. Commit the pack, `cheats.json` and `build-report.json` together. Do not
    hand-edit `cheats.json`; the script owns it.
 
 ## Rules

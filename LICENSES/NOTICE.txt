@@ -10,9 +10,9 @@ That repository is the community database for the FinalCheat/VitaCheat
 plugins. It publishes no LICENSE file and no blanket open-source license for
 the cheat data it collects. Therefore:
 
-- The catalog does not relicense the packs. It redistributes them unchanged,
-  byte for byte, with the original header comments (title, region, version,
-  code authors, original sources) intact.
+- The catalog does not relicense the packs. It preserves their text and
+  original header comments (title, region, version, code authors, original
+  sources); Git normalizes line endings to LF.
 - Every entry in cheats.json records the sourceUrl of the exact upstream file
   and the sourceName of the database.
 - The pack contents belong to the code authors credited inside each pack. The

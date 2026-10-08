@@ -24,8 +24,19 @@ SOURCE_NAME = "VitaCheat database"
 
 TITLE_ID_RE = re.compile(r"^[A-Z]{4}\d{5}$")
 PACK_NAME_RE = re.compile(r"^([A-Za-z]{4}\d{5})(?:[-_](.+))?$")
-BLOCK_RE = re.compile(r"^_V[01]\s+", re.IGNORECASE)
+BLOCK_RE = re.compile(r"^_V[01]", re.IGNORECASE)
 HEADER_RE = re.compile(r"^#\s*([^:]+):\s*(.*)$")
+
+
+def canonical_pack_bytes(data: bytes) -> bytes:
+    """Return the LF representation used by GitHub's published pack files."""
+    return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+
+
+def write_json(path: Path, value: dict) -> None:
+    """Write generated metadata with stable LF line endings on every OS."""
+    content = json.dumps(value, indent=2) + "\n"
+    path.write_bytes(content.encode("utf-8"))
 
 
 def parse_pack(path: Path) -> tuple[dict[str, str], int]:
@@ -46,7 +57,7 @@ def parse_pack(path: Path) -> tuple[dict[str, str], int]:
 
 def build_entry(path: Path, title_id: str, variant: str) -> dict:
     meta, blocks = parse_pack(path)
-    data = path.read_bytes()
+    data = canonical_pack_bytes(path.read_bytes())
     title = meta.get("title", title_id)
     if variant:
         title = f"{title} ({variant.upper()})"
@@ -120,7 +131,7 @@ def main() -> int:
         "entries": entries,
     }
 
-    Path(args.output).write_text(json.dumps(catalog, indent=2) + "\n", encoding="utf-8")
+    write_json(Path(args.output), catalog)
 
     report = {
         "generatedAt": generated_at,
@@ -129,7 +140,7 @@ def main() -> int:
         "blockCount": catalog["blockCount"],
         "skipped": skipped,
     }
-    Path(args.report).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    write_json(Path(args.report), report)
 
     print(f"catalog: {len(entries)} packs, {catalog['blockCount']} blocks, {len(skipped)} skipped")
     return 0

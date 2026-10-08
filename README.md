@@ -16,8 +16,8 @@ Contents
 --------
 
 - `cheats.json` - schema version 1 catalog used by EmuCoreV.
-- `files/<TITLEID>.psv` - the packs themselves, byte-identical to the pinned
-  upstream revision.
+- `files/<TITLEID>.psv` - packs sourced from the pinned upstream revision;
+  Git stores them with LF line endings.
 - `sources.json` - source attribution and the exact input revision.
 - `schemas/cheat-catalog.schema.json` - public catalog contract.
 - `scripts/build_catalog.py` - regenerates `cheats.json` and
@@ -25,13 +25,13 @@ Contents
 - `scripts/validate_catalog.py` - dependency-free offline validator.
 - `build-report.json` - what the last build produced, including skipped packs.
 - `LICENSES/NOTICE.txt` - attribution and licensing notes.
-- `.gitattributes` - keeps `*.psv` packs on LF so catalog SHA-256 hashes stay
-  byte-stable after checkout on Windows.
+- `.gitattributes` - keeps published `*.psv` packs on LF. Catalog SHA-256
+  hashes use this LF-canonical form so builds stay stable across checkouts.
 
 Source and attribution
 ----------------------
 
-The packs come from the `db/` folder of
+The pack text comes from the `db/` folder of
 [r0ah/vitacheat](https://github.com/r0ah/vitacheat) at commit
 `bb8158a1c696914a8ea2299889d42ab9a57a3ab2`. That repository is the community
 database for the FinalCheat/VitaCheat plugins; each pack starts with the game
@@ -39,10 +39,11 @@ title, region, version, code authors and original sources, and those headers
 are preserved unchanged.
 
 The upstream repository publishes no blanket open-source license for the cheat
-data, so this catalog does not relicense it. It keeps the original bytes, keeps
-the per-file source URL in every catalog entry, and keeps the author credits
-that are written inside the packs. If a code author asks for a pack to be
-removed, it will be removed from `files/` and `cheats.json`.
+data, so this catalog does not relicense it. It preserves the pack text,
+headers, author credits and source notes while Git normalizes line endings to
+LF. Every catalog entry records the pinned per-file source URL. If a code
+author asks for a pack to be removed, it will be removed from `files/` and
+`cheats.json`.
 
 Pack format
 -----------
@@ -82,7 +83,9 @@ python scripts/validate_catalog.py
 ```
 
 `build_catalog.py` reads the header of every pack, counts the `_V0`/`_V1`
-blocks, hashes the file and rewrites `cheats.json` and `build-report.json`.
+blocks, hashes its LF-canonical bytes and rewrites `cheats.json` and
+`build-report.json`. Git publishes `.psv` packs with LF line endings, so the
+catalog digest matches the downloaded pack even when a local input uses CRLF.
 Packs with an invalid title id or without a single cheat block are listed in
 the report and skipped instead of being published broken.
 
