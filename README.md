@@ -82,11 +82,14 @@ python scripts/build_catalog.py
 python scripts/validate_catalog.py
 ```
 
-`build_catalog.py` reads the header of every pack, counts the `_V0`/`_V1`
-blocks, hashes its LF-canonical bytes and rewrites `cheats.json` and
-`build-report.json`. Git publishes `.psv` packs with LF line endings, so the
-catalog digest matches the downloaded pack even when a local input uses CRLF.
-Packs with an invalid title id or without a single cheat block are listed in
+`build_catalog.py` reads the header of every pack, counts `_V0`/`_V1` blocks
+that contain at least one code line accepted by Vita3K's native parser, hashes
+the LF-canonical bytes and rewrites `cheats.json` and `build-report.json`. This
+excludes instruction-only markers and malformed or incomplete code lines from
+the displayed block count; two-token shorthand lines are not accepted by the
+native parser. Git publishes `.psv` packs with LF line endings, so the catalog
+digest matches the downloaded pack even when a local input uses CRLF. Packs
+with an invalid title id or without a single usable cheat block are listed in
 the report and skipped instead of being published broken.
 
 Adding a pack

@@ -39,9 +39,34 @@ def write_json(path: Path, value: dict) -> None:
     path.write_bytes(content.encode("utf-8"))
 
 
+def _parse_hex(token: str) -> int | None:
+    if token.startswith("$"):
+        token = token[1:]
+    elif token.lower().startswith("0x"):
+        token = token[2:]
+    if not token or len(token) > 8 or not re.fullmatch(r"[0-9a-fA-F]+", token):
+        return None
+    return int(token, 16)
+
+
+def _is_native_code_line(line: str) -> bool:
+    """Match Vita3K parser.cpp's `$XXXX AAAAAAAA BBBBBBBB` acceptance."""
+    if not line.startswith("$"):
+        return False
+    tokens = line.split()
+    if len(tokens) < 3:
+        return False
+    control = _parse_hex(tokens[0])
+    first = _parse_hex(tokens[1])
+    second = _parse_hex(tokens[2])
+    return control is not None and control <= 0xFFFF and first is not None and second is not None
+
+
 def parse_pack(path: Path) -> tuple[dict[str, str], int]:
     meta: dict[str, str] = {}
     blocks = 0
+    current_declaration = False
+    current_block_has_code = False
     with path.open("r", encoding="utf-8-sig", errors="replace") as handle:
         for raw in handle:
             line = raw.strip()
@@ -51,7 +76,15 @@ def parse_pack(path: Path) -> tuple[dict[str, str], int]:
                     meta[match.group(1).strip().lower()] = match.group(2).strip()
                 continue
             if BLOCK_RE.match(line):
-                blocks += 1
+                if current_declaration and current_block_has_code:
+                    blocks += 1
+                current_declaration = True
+                current_block_has_code = False
+                continue
+            if current_declaration and _is_native_code_line(line):
+                current_block_has_code = True
+    if current_declaration and current_block_has_code:
+        blocks += 1
     return meta, blocks
 
 

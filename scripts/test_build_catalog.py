@@ -44,14 +44,33 @@ class BuildCatalogTests(unittest.TestCase):
 
             self.assertEqual(b'{\n  "entryCount": 1\n}\n', output.read_bytes())
 
-    def test_pack_count_includes_vita_parser_empty_name_declarations(self):
+    def test_pack_count_accepts_empty_name_when_code_is_valid(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             pack = Path(temporary_directory) / "PCSA00008.psv"
             pack.write_bytes(b"_V0\n$0000 00000000 00000000\n_V1 Named\n")
 
             _, block_count = build_catalog.parse_pack(pack)
 
-        self.assertEqual(2, block_count)
+        self.assertEqual(1, block_count)
+
+    def test_pack_block_count_only_includes_native_parseable_code_blocks(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            pack = Path(temporary_directory) / "PCSA00008.psv"
+            pack.write_bytes(
+                b"_V0 Valid code with ignored trailing token\n"
+                b"$0200 81000000 00000001 extra\n"
+                b"_V1 Two-token shorthand is not accepted natively\n"
+                b"$0200 81000000\n"
+                b"_V0 Invalid hex is dropped\n"
+                b"$02OO 81000004 00000001\n"
+                b"_V1 Oversized control word is dropped\n"
+                b"$10000 81000008 00000001\n"
+                b"_V0 No code line\n"
+            )
+
+            _, block_count = build_catalog.parse_pack(pack)
+
+        self.assertEqual(1, block_count)
 
 
 if __name__ == "__main__":
